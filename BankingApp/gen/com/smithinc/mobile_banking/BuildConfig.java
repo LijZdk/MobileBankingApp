@@ -1,5 +1,5 @@
 /** Automatically generated file. DO NOT MODIFY */
-package com.test.bankingapp;
+package com.smithinc.mobile_banking;
 
 public final class BuildConfig {
     public final static boolean DEBUG = true;

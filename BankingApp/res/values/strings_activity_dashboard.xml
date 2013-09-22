@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string-array name="choices" >
+        <item>Accounts</item>
+        <item>Transfer Funds</item>
+        <item>Logout</item>
+    </string-array>
+    
+</resources>
