@@ -11,7 +11,7 @@
 
 @implementation BaseOperation
 
-@synthesize statusCode = _statusCode;
+//@synthesize statusCode = _statusCode;
 @synthesize responseData = _responseData;
 
 - (id)init {
