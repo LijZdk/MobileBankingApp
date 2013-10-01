@@ -60,7 +60,7 @@ public class AccountViewActivity extends Activity {
 			StringBuilder stringBuilder;
 			String account, balance;
 			
-			HttpGet httpGet = new HttpGet("http://129.252.226.221:8888/user/authenticate");
+			HttpGet httpGet = new HttpGet("http://129.252.226.221:8888/user/accounts");
 			
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response;
@@ -106,6 +106,12 @@ public class AccountViewActivity extends Activity {
 			}
 			
 			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(List result)
+		{
+			
 		}
 		
 	}
