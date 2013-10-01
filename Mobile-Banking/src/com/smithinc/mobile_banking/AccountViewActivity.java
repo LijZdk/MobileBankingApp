@@ -18,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.smithinc.mobile_banking.R;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -60,7 +62,7 @@ public class AccountViewActivity extends Activity {
 			StringBuilder stringBuilder;
 			String account, balance;
 			
-			HttpGet httpGet = new HttpGet("http://129.252.226.221:8888/user/authenticate");
+			HttpGet httpGet = new HttpGet("http://10.251.5.20:8888/user/authenticate");
 			
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response;
