@@ -14,6 +14,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -48,20 +51,14 @@ public class AccountViewActivity extends Activity {
 		
 	}
 	
-	public class grabAccountInfoTask extends AsyncTask<Void, Void, List<String>>
+	public class grabAccountInfoTask extends AsyncTask<Void, Void, List>
 	{
 
 		@Override
-		protected List<String> doInBackground(Void... params)
+		protected List doInBackground(Void... params)
 		{
 			StringBuilder stringBuilder;
-//			URL obj = null;
-//			try {
-//				obj = new URL("http://129.252.226.221:8888/user/authenticate");
-//			} catch (MalformedURLException e3) {
-//				// TODO Auto-generated catch block
-//				e3.printStackTrace();
-//			}
+			String account, balance;
 			
 			HttpGet httpGet = new HttpGet("http://129.252.226.221:8888/user/authenticate");
 			
@@ -93,6 +90,20 @@ public class AccountViewActivity extends Activity {
 				e.printStackTrace();
 			}
 			
+			JSONObject jsonObject;
+			
+			try
+			{
+				jsonObject = new JSONObject(stringBuilder.toString());
+				
+				//Need to know order of JSON Object
+				String accountType = ((JSONArray)jsonObject.get("name")).getString(0);
+				
+			}
+			catch(JSONException e)
+			{
+				e.printStackTrace();
+			}
 			
 			return null;
 		}
