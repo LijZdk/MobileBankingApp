@@ -31,9 +31,19 @@ public class AccountViewActivity extends Activity {
 		
 		/*public void addItems(View v) {
 			
+<<<<<<< HEAD
+=======
+			HttpGet httpGet = new HttpGet("http://129.252.226.221:8888/user/accounts");
+>>>>>>> origin/master
 			
 		}*/
 		
+		
+		@Override
+		protected void onPostExecute(List result)
+		{
+			
+		}
 		
 	}
 	
