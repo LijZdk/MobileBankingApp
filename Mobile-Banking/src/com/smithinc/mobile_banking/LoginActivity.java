@@ -8,6 +8,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -15,9 +17,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -73,6 +79,15 @@ public class LoginActivity extends Activity {
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
 	private UserLoginTask mAuthTask = null;
+	
+	// IP Address
+	/*private static final Pattern IP_ADDRESS
+    = Pattern.compile(
+        "((25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\\.(25[0-5]|2[0-4]"
+        + "[0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]"
+        + "[0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}"
+        + "|[1-9][0-9]|[0-9]))");*/
+	private static final String[] IP_ADDRESSES = {"129.252.226.221:8888", "192.168.1.76:8080"};
 
 	// Values for username and password at the time of the login attempt.
 	private String mUsername;
@@ -378,156 +393,107 @@ public class LoginActivity extends Activity {
 		protected Boolean doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
 			
+//			Matcher matcher = IP_ADDRESS.matcher("192.168.1.76");
+//			if (!matcher.matches()) {
+//				// ip is correct
+//				return false;
+//			}
+			
 			Log.d("Username", mUsername);
 			Log.d("Password", mPassword);
 			
-			//JSONParser jParser = new JSONParser();
-			
-			int response = -1;
-			
-			URL obj = null;
-			try {
-				obj = new URL("http://129.252.226.221:8888/user/authenticate");
-			} catch (MalformedURLException e3) {
-				// TODO Auto-generated catch block
-				e3.printStackTrace();
-			}
-			
-			HttpURLConnection connection = null;
-			
-			try {
-				connection = (HttpURLConnection) obj.openConnection();
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			};
-			
-			try {
-				connection.setRequestMethod("POST");
-				connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((mUsername + ":" + mPassword).getBytes(), Base64.NO_WRAP));
-				connection.setDoOutput(true);
-			} catch (ProtocolException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			
-			
-			try {
-				response = connection.getResponseCode();
-				Log.e("Response Code", "" + connection.getResponseCode());
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			connection.disconnect();
-			
-			
-			
-			JSONObject object = new JSONObject();
-			try {
-				object.put("PHP_AUTH_USER", mUsername);
-				object.put("PHP_AUTH_PW", mPassword);
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			// Validate IP Address
-
-			
-//			HttpClient client = new DefaultHttpClient();
+//			int response = -1;
 //			
-//			//HttpClient client = new DefaultHttpClient();
-//			HttpPost post = new HttpPost("http://129.252.226.221:8888/user/authenticate");
-//		post.setHeader("PHP_AUTH_USER", mUsername);
-//			post.setHeader("PHP_AUTH_PW", mPassword);
+//			URL obj = null;
+//			try {
+//				obj = new URL("http://192.168.1.76:8080/user/authenticate");
+//			} catch (MalformedURLException e3) {
+//				// TODO Auto-generated catch block
+//				e3.printStackTrace();
+//			}
 //			
-//			
-//			
-//			String responseBody = "";
-//			//httpPost.setHeader("Authroization",)
-//			//httpPost.setHeader(HTTP.CONTENT_TYPE, "application/json");
-//			
-//			
-//			HttpResponse response = null;
-//			
-////			try {
-////				
-////			JSONObject obj = new JSONObject();
-////			
-////			obj.put("username", mUsername);
-////			obj.put("password", mPassword);
-//			
-//			
-//			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-//			
-//			nameValuePairs.add(new BasicNameValuePair("user", mUsername));
-//			nameValuePairs.add(new BasicNameValuePair("pass", mPassword));
-//			
-////			try {
-////				post.setEntity(new StringEntity(obj.toString(), "UTF-8"));
-////			} catch (UnsupportedEncodingException e1) {
-////				// TODO Auto-generated catch block
-////				e1.printStackTrace();
-////			}
-////			
-////			response = client.execute(post);
-////			Log.d("Response", "" + response.getStatusLine().getStatusCode());
-////			//responseBody = inputStreamToString(response.getEntity());
-////			//Log.d("Response Entity", responseBody);
-////			
-////			} catch (JSONException e) {
-////				Log.e("JSON Exception", e.getMessage());
-////			} catch (ClientProtocolException e) {
-////				// TODO Auto-generated catch block
-////				e.printStackTrace();
-////			} catch (IOException e) {
-////				// TODO Auto-generated catch block
-////				e.printStackTrace();
-////			}
+//			HttpURLConnection connection = null;
 //			
 //			try {
-//				post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-//			} catch (UnsupportedEncodingException e1) {
+//				connection = (HttpURLConnection) obj.openConnection();
+//			} catch (IOException e2) {
+//				// TODO Auto-generated catch block
+//				e2.printStackTrace();
+//			};
+//			
+//			try {
+//				connection.setRequestMethod("POST");
+//				connection.setRequestProperty("Authorization", "Basic " + Base64.encodeToString((mUsername + ":" + mPassword).getBytes(), Base64.NO_WRAP));
+//				connection.setDoOutput(true);
+//			} catch (ProtocolException e2) {
+//				// TODO Auto-generated catch block
+//				e2.printStackTrace();
+//			}
+//			
+//			
+//			try {
+//				response = connection.getResponseCode();
+//				Log.e("Response Code", "" + connection.getResponseCode());
+//			} catch (IOException e1) {
 //				// TODO Auto-generated catch block
 //				e1.printStackTrace();
 //			}
 //			
+//			connection.disconnect();
 //			
 //			
+//			
+//			JSONObject object = new JSONObject();
 //			try {
-//				// Simulate network access.
-//				Thread.sleep(200);
-//				response = client.execute(post);
-//				Log.e("Response", "" + response.getStatusLine().getStatusCode());
-//			} catch (ClientProtocolException e) {
-//				Log.e("Client Protocol Exception", e.getMessage());
-//				return false;
-//			} catch (IOException e) {
-//				Log.e("I/O Exception", e.getMessage());
-//				return false;
-//			} catch (InterruptedException e) {
-//				Log.e("Interrupted Exception", e.getMessage());
+//				object.put("PHP_AUTH_USER", mUsername);
+//				object.put("PHP_AUTH_PW", mPassword);
+//			} catch (JSONException e) {
 //				// TODO Auto-generated catch block
-//				return false;
+//				e.printStackTrace();
 //			}
-//
-////			for (String credential : DUMMY_CREDENTIALS) {
-////				String[] pieces = credential.split(":");
-////				if (pieces[0].equals(mUsername)) {
-////					// Account exists, return true if the password matches.
-////					return pieces[1].equals(mPassword);
-////				}
-////			}
-//			
-			if (response == 200) 
-				return true;
+			
+			// Validate IP Address			
+			for (String IP : IP_ADDRESSES) {
+				
+				final HttpParams httpParams = new BasicHttpParams();
+				HttpConnectionParams.setConnectionTimeout(httpParams, 1000);
+					
+				HttpClient client = new DefaultHttpClient(httpParams);
+				HttpPost post = new HttpPost("http://" + IP + "/user/authenticate");
+				
+				HttpResponse response = null;
+				
+				post.setHeader("Authorization", "Basic " + Base64.encodeToString((mUsername + ":" + mPassword).getBytes(), Base64.NO_WRAP));
+				
+				try {
+					Thread.sleep(200);
+					response = client.execute(post);
+					Log.e("Response", "" + response.getStatusLine().getStatusCode());
+				} catch (ConnectTimeoutException e) {
+					Log.e("Connect Timeout Exception", e.getMessage() + " on IP:" + IP);
+				} catch (ClientProtocolException e) {
+					Log.e("Client Protocol Exception", e.getMessage() + " on IP:" + IP);
+					//return false;
+				} catch (IOException e) {
+					Log.e("I/O Exception", e.getMessage() + " on IP:" + IP);
+					//return false;
+				} catch (InterruptedException e) {
+					Log.e("Interrupted Exception", e.getMessage() + " on IP:" + IP);
+					// TODO Auto-generated catch block
+					//return false;
+				}
+				
+				if (response != null && response.getStatusLine().getStatusCode() == 200) 
+					return true;
+			
+			}
+//			switch (response.getStatusLine().getStatusCode()) {
+//			case 200:
+//			case 
 			
 			
-			//client.getConnectionManager().shutdown();			
-
-			// TODO: register the new account here.
+			//}
+			
 			return false;
 		}
 

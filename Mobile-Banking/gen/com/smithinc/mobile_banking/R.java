@@ -21,18 +21,21 @@ public final class R {
         public static final int roundedlistview=0x7f020004;
     }
     public static final class id {
-        public static final int choice_container=0x7f080000;
-        public static final int login=0x7f080006;
-        public static final int login_form=0x7f080003;
-        public static final int login_status=0x7f080001;
-        public static final int login_status_message=0x7f080002;
-        public static final int menu_forgot_password=0x7f08000b;
-        public static final int password=0x7f080005;
-        public static final int pin=0x7f080009;
-        public static final int pin_form=0x7f08000a;
-        public static final int remember_me_switch=0x7f080008;
-        public static final int sign_in_button=0x7f080007;
-        public static final int username=0x7f080004;
+        public static final int dashboard=0x7f080002;
+        public static final int dashboard_container=0x7f080003;
+        public static final int login=0x7f080009;
+        public static final int login_form=0x7f080006;
+        public static final int login_status=0x7f080004;
+        public static final int login_status_message=0x7f080005;
+        public static final int menu_forgot_password=0x7f08000e;
+        public static final int password=0x7f080008;
+        public static final int pin=0x7f08000c;
+        public static final int pin_form=0x7f08000d;
+        public static final int remember_me_switch=0x7f08000b;
+        public static final int sign_in_button=0x7f08000a;
+        public static final int status=0x7f080000;
+        public static final int status_message=0x7f080001;
+        public static final int username=0x7f080007;
     }
     public static final class layout {
         public static final int activity_dashboard=0x7f030000;
@@ -46,21 +49,22 @@ public final class R {
         public static final int activity_login=0x7f070000;
     }
     public static final class string {
-        public static final int action_sign_in_register=0x7f040003;
-        public static final int action_sign_in_short=0x7f040004;
+        public static final int action_sign_in_register=0x7f040004;
+        public static final int action_sign_in_short=0x7f040005;
         public static final int app_name=0x7f040000;
-        public static final int error_field_required=0x7f04000a;
-        public static final int error_incorrect_password=0x7f040009;
-        public static final int error_invalid_password=0x7f040008;
-        public static final int error_invalid_username=0x7f040007;
-        public static final int login_progress_signing_in=0x7f040006;
-        public static final int menu_forgot_password=0x7f040005;
-        public static final int prompt_password=0x7f040002;
-        public static final int prompt_pin=0x7f04000c;
+        public static final int error_field_required=0x7f04000b;
+        public static final int error_incorrect_password=0x7f04000a;
+        public static final int error_invalid_password=0x7f040009;
+        public static final int error_invalid_username=0x7f040008;
+        public static final int login_progress_signing_in=0x7f040007;
+        public static final int menu_forgot_password=0x7f040006;
+        public static final int progress_retrieving_data=0x7f040001;
+        public static final int prompt_password=0x7f040003;
+        public static final int prompt_pin=0x7f04000d;
         /**  Strings related to login 
          */
-        public static final int prompt_username=0x7f040001;
-        public static final int remember_me_switch=0x7f04000b;
+        public static final int prompt_username=0x7f040002;
+        public static final int remember_me_switch=0x7f04000c;
     }
     public static final class style {
         /** 
