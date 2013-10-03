@@ -387,7 +387,7 @@ public class LoginActivity extends Activity {
 			
 			URL obj = null;
 			try {
-				obj = new URL("http://129.252.226.221:8888/user/authenticate");
+				obj = new URL("http://192.168.1.106:80/user/authenticate");
 			} catch (MalformedURLException e3) {
 				// TODO Auto-generated catch block
 				e3.printStackTrace();

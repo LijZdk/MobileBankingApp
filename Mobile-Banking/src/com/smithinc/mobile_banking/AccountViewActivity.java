@@ -19,11 +19,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.smithinc.mobile_banking.R;
+import com.smithinc.mobile_banking.LoginActivity.UserLoginTask;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -32,6 +34,7 @@ import android.widget.Toast;
 public class AccountViewActivity extends Activity {
 
 	private ListView mListView;
+	private  grabAccountInfoTask grabInfoTask = null;
 	
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -39,18 +42,18 @@ public class AccountViewActivity extends Activity {
 		
 		setContentView(R.layout.activity_view_accounts);
 		
-		mListView = (ListView) findViewById(R.id.choice_container);
+		mListView = (ListView) findViewById(R.id.account_container);
+		
+		grabInfoTask = new grabAccountInfoTask();
 		
 		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Toast.makeText(getApplicationContext(), "Click ListItem Number " + position, Toast.LENGTH_LONG).show();
+				
+				grabInfoTask.execute();
 			}
-		});
-		
-		
-		
-		
+		});	
 	}
 	
 	public class grabAccountInfoTask extends AsyncTask<Void, Void, List>
@@ -62,11 +65,8 @@ public class AccountViewActivity extends Activity {
 			StringBuilder stringBuilder;
 			String account, balance;
 			
-<<<<<<< HEAD
-			HttpGet httpGet = new HttpGet("http://10.251.5.20:8888/user/authenticate");
-=======
-			HttpGet httpGet = new HttpGet("http://129.252.226.221:8888/user/accounts");
->>>>>>> origin/master
+
+			HttpGet httpGet = new HttpGet("http://192.168.1.106:80/accounts");
 			
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response;
@@ -103,7 +103,8 @@ public class AccountViewActivity extends Activity {
 				jsonObject = new JSONObject(stringBuilder.toString());
 				
 				//Need to know order of JSON Object
-				String accountType = ((JSONArray)jsonObject.get("name")).getString(0);
+				//String accountType = ((JSONArray)jsonObject.get("accounts")).getString(0);
+				Log.e("Accounts type"," Type: " + stringBuilder.toString());
 				
 			}
 			catch(JSONException e)
