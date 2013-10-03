@@ -440,13 +440,12 @@ public class LoginActivity extends Activity {
 //			
 //			//HttpClient client = new DefaultHttpClient();
 //			HttpPost post = new HttpPost("http://129.252.226.221:8888/user/authenticate");
-//			post.setHeader("PHP_AUTH_USER", mUsername);
+//		post.setHeader("PHP_AUTH_USER", mUsername);
 //			post.setHeader("PHP_AUTH_PW", mPassword);
 //			
 //			
 //			
 //			String responseBody = "";
-//			
 //			//httpPost.setHeader("Authroization",)
 //			//httpPost.setHeader(HTTP.CONTENT_TYPE, "application/json");
 //			
