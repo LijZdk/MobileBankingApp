@@ -66,7 +66,7 @@ public class AccountViewActivity extends Activity {
 			String account, balance;
 			
 
-			HttpGet httpGet = new HttpGet("http://192.168.1.106:80/accounts");
+			HttpGet httpGet = new HttpGet("http://192.168.1.106:80/user/accounts");
 			
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response;
@@ -98,19 +98,19 @@ public class AccountViewActivity extends Activity {
 			
 			JSONObject jsonObject;
 			
-			try
-			{
-				jsonObject = new JSONObject(stringBuilder.toString());
+			//try
+			//{
+				//jsonObject = new JSONObject(stringBuilder.toString());
 				
 				//Need to know order of JSON Object
-				//String accountType = ((JSONArray)jsonObject.get("accounts")).getString(0);
+				//String accountType = ((JSONArray)jsonObject.get("iv")).getString(0);
 				Log.e("Accounts type"," Type: " + stringBuilder.toString());
 				
-			}
-			catch(JSONException e)
-			{
-				e.printStackTrace();
-			}
+			//}
+			//catch(JSONException e)
+			//{
+			//	e.printStackTrace();
+			//}
 			
 			return null;
 		}
