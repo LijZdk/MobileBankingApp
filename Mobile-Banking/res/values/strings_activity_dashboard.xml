@@ -7,4 +7,6 @@
         <item>Logout</item>
     </string-array>
     
+    <string name="progress_retrieving_data">Retrieving data&#8230;</string>
+    
 </resources>

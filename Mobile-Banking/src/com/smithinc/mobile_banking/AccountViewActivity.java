@@ -1,5 +1,6 @@
 package com.smithinc.mobile_banking;
 
+<<<<<<< HEAD
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -21,11 +22,16 @@ import org.json.JSONObject;
 import com.smithinc.mobile_banking.R;
 import com.smithinc.mobile_banking.LoginActivity.UserLoginTask;
 
+=======
+>>>>>>> origin/master
 import android.app.Activity;
-import android.os.AsyncTask;
+import android.app.ListActivity;
 import android.os.Bundle;
+<<<<<<< HEAD
 import android.util.Base64;
 import android.util.Log;
+=======
+>>>>>>> origin/master
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -42,6 +48,7 @@ public class AccountViewActivity extends Activity {
 		
 		setContentView(R.layout.activity_view_accounts);
 		
+<<<<<<< HEAD
 		mListView = (ListView) findViewById(R.id.account_container);
 		
 		grabInfoTask = new grabAccountInfoTask();
@@ -114,6 +121,28 @@ public class AccountViewActivity extends Activity {
 			
 			return null;
 		}
+=======
+//		mListView = (ListView) findViewById(R.id.accounts_container);
+//		
+//		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//				Toast.makeText(getApplicationContext(), "Click ListItem Number " + position, Toast.LENGTH_LONG).show();
+//			}
+//		});
+		
+		
+		
+		/*public void addItems(View v) {
+			
+<<<<<<< HEAD
+=======
+			HttpGet httpGet = new HttpGet("http://129.252.226.221:8888/user/accounts");
+>>>>>>> origin/master
+			
+		}*/
+		
+>>>>>>> origin/master
 		
 		@Override
 		protected void onPostExecute(List result)
