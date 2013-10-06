@@ -3,52 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-       
-    <!-- <ListView
+
+    <ListView
         android:id="@+id/accounts_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:padding="8dp"
-        android:gravity="center_horizontal"
+        android:layout_marginTop="15dp"
         android:background="@drawable/roundedlistview"
+        android:gravity="center_horizontal"
+        android:padding="8dp"
         android:textAlignment="viewEnd" >
-        
-        <TextView 
-            android:id="@+id/account_number"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-        
-        <TextView
-            android:id="@+id/account_balance"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-        
-     </ListView>
-    -->
-    
-<<<<<<< HEAD
-    <TextView 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Is Working..." />
+    </ListView>
 
-=======
-	
-        <ListView
-        android:id="@+id/account_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:padding="8dp"
-        android:gravity="center_horizontal"
-        android:background="@drawable/roundedlistview"
-        android:textAlignment="viewEnd"
-        android:entries="@array/choices" />
-        
->>>>>>> origin/master
+    <!--<TextView
+        android:id="@+id/account_sav"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/account_chk"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+    
+     <TextView
+        android:id="@+id/account_ret"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />-->
+
 </LinearLayout>

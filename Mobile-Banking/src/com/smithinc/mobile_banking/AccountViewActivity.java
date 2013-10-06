@@ -1,12 +1,12 @@
 package com.smithinc.mobile_banking;
 
-<<<<<<< HEAD
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -22,135 +22,65 @@ import org.json.JSONObject;
 import com.smithinc.mobile_banking.R;
 import com.smithinc.mobile_banking.LoginActivity.UserLoginTask;
 
-=======
->>>>>>> origin/master
 import android.app.Activity;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
-<<<<<<< HEAD
+
 import android.util.Base64;
 import android.util.Log;
-=======
->>>>>>> origin/master
+
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class AccountViewActivity extends Activity {
+public class AccountViewActivity extends Activity
+{
 
 	private ListView mListView;
-	private  grabAccountInfoTask grabInfoTask = null;
-	
+	private ArrayAdapter<String> accAdt;
+	private List<String> accListFView;
+
+	// private grabAccountInfoTask grabInfoTask = null;
+
 	@Override
-	protected void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		setContentView(R.layout.activity_view_accounts);
-		
-<<<<<<< HEAD
-		mListView = (ListView) findViewById(R.id.account_container);
-		
-		grabInfoTask = new grabAccountInfoTask();
-		
-		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Toast.makeText(getApplicationContext(), "Click ListItem Number " + position, Toast.LENGTH_LONG).show();
-				
-				grabInfoTask.execute();
-			}
-		});	
-	}
-	
-	public class grabAccountInfoTask extends AsyncTask<Void, Void, List>
+	protected void onCreate(Bundle savedInstanceState)
 	{
+		super.onCreate(savedInstanceState);
 
-		@Override
-		protected List doInBackground(Void... params)
-		{
-			StringBuilder stringBuilder;
-			String account, balance;
-			
+		setContentView(R.layout.activity_view_accounts);
 
-			HttpGet httpGet = new HttpGet("http://192.168.1.106:80/user/accounts");
-			
-			HttpClient client = new DefaultHttpClient();
-			HttpResponse response;
-			
-			stringBuilder = new StringBuilder();
-			
-			try
-			{
-				response = client.execute(httpGet);
-				HttpEntity entity = response.getEntity();
-				InputStream stream = entity.getContent();
-				int b;
-				
-				while((b = stream.read()) != -1)
-				{
-					stringBuilder.append((char) b);
-				}
-			} 
-			catch (ClientProtocolException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			JSONObject jsonObject;
-			
-			//try
-			//{
-				//jsonObject = new JSONObject(stringBuilder.toString());
-				
-				//Need to know order of JSON Object
-				//String accountType = ((JSONArray)jsonObject.get("iv")).getString(0);
-				Log.e("Accounts type"," Type: " + stringBuilder.toString());
-				
-			//}
-			//catch(JSONException e)
-			//{
-			//	e.printStackTrace();
-			//}
-			
-			return null;
-		}
-=======
-//		mListView = (ListView) findViewById(R.id.accounts_container);
-//		
-//		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//			@Override
-//			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//				Toast.makeText(getApplicationContext(), "Click ListItem Number " + position, Toast.LENGTH_LONG).show();
-//			}
-//		});
+		mListView = (ListView) findViewById(R.id.accounts_container);
+
+		List accList = new ArrayList<String>();
+		accList = getIntent().getStringArrayListExtra("accountsList");
+
+		accListFView = new ArrayList<String>();
+
+		// String typesList = "Type:        Number:       Balance:";
+		String sav = accList.get(0).toString() + "\n" + "Number: "
+				+ accList.get(1).toString() + "\nBalance: "
+				+ accList.get(2).toString();
 		
+		String chk = accList.get(3).toString() + "\n" + "Number: "
+				+ accList.get(4).toString() + "\nBalance: "
+				+ accList.get(5).toString();
 		
-		
-		/*public void addItems(View v) {
-			
-<<<<<<< HEAD
-=======
-			HttpGet httpGet = new HttpGet("http://129.252.226.221:8888/user/accounts");
->>>>>>> origin/master
-			
-		}*/
-		
->>>>>>> origin/master
-		
-		@Override
-		protected void onPostExecute(List result)
-		{
-			
-		}
+		String ret = accList.get(6).toString() + "\n" + "Number: "
+				+ accList.get(7).toString() + "\nBalance: "
+				+ accList.get(8).toString();
+
+		// accListFView.add(typesList);
+		accListFView.add(chk);
+		accListFView.add(sav);
+		accListFView.add(ret);
+
+		accAdt = new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, accListFView);
+
+		mListView.setAdapter(accAdt);
 		
 	}
-	
-	
 }
