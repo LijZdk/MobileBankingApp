@@ -50,9 +50,9 @@ public class DashboardActivity extends Activity
 	private static final String[] IP_ADDRESSES =
 	{ 
 		"129.252.226.221:8888", 
-		/*"192.168.1.76:8080" , 
+		"192.168.1.76:8080" , 
 		"192.168.1.106:80", 
-		"10.251.4.206"*/
+		"10.251.4.220"
 	 };
 
 	// Is the device registered
@@ -182,7 +182,7 @@ public class DashboardActivity extends Activity
 				try
 				{
 					final HttpParams httpParams = new BasicHttpParams();
-					HttpConnectionParams.setConnectionTimeout(httpParams, 1000);
+					HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
 
 					HttpClient client = new DefaultHttpClient(httpParams);
 					HttpGet get = new HttpGet("http://" + IP + "/user/accounts");

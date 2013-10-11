@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,8 @@ public class AccountViewActivity extends Activity
 
 		accListFView = new ArrayList<String>();
 
+
+		
 		// String typesList = "Type:        Number:       Balance:";
 		String sav = accList.get(0).toString() + "\n" + "Number: "
 				+ accList.get(1).toString() + "\nBalance: "
