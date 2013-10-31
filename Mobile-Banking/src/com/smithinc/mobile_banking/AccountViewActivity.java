@@ -44,7 +44,6 @@ public class AccountViewActivity extends Activity
 	private ArrayAdapter<String> accAdt;
 	private List<String> accListFView;
 
-	// private grabAccountInfoTask grabInfoTask = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -63,17 +62,20 @@ public class AccountViewActivity extends Activity
 
 		
 		// String typesList = "Type:        Number:       Balance:";
-		String sav = accList.get(0).toString() + "\n" + "Number: "
+		String chk = accList.get(0).toString() + "\n" + "Number: "
 				+ accList.get(1).toString() + "\nBalance: "
 				+ accList.get(2).toString();
 		
-		String chk = accList.get(3).toString() + "\n" + "Number: "
+
+		String sav = accList.get(3).toString() + "\n" + "Number: "
 				+ accList.get(4).toString() + "\nBalance: "
 				+ accList.get(5).toString();
+
 		
 		String ret = accList.get(6).toString() + "\n" + "Number: "
 				+ accList.get(7).toString() + "\nBalance: "
 				+ accList.get(8).toString();
+
 
 		// accListFView.add(typesList);
 		accListFView.add(chk);

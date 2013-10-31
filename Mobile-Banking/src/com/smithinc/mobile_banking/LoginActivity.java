@@ -1,6 +1,9 @@
 package com.smithinc.mobile_banking;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -11,6 +14,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -26,8 +30,11 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.smithinc.mobile_banking.RegisterUserLoginActivity.UserLoginTask;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -57,14 +64,13 @@ import android.net.http.*;
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */
-public class LoginActivity extends Activity
-{
+public class LoginActivity extends Activity {
 	/**
 	 * A dummy authentication store containing known user names and passwords.
 	 * TODO: remove after connecting to a real authentication system.
 	 */
-	private static final String[] DUMMY_CREDENTIALS = new String[]
-	{ "user:basic:6666" };
+
+	private static final String[] DUMMY_CREDENTIALS = new String[] { "user:basic:6666" };
 
 	/**
 	 * The default username to populate the username field with.
@@ -89,12 +95,22 @@ public class LoginActivity extends Activity
 	 * + "[0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}" +
 	 * "|[1-9][0-9]|[0-9]))");
 	 */
+<<<<<<< HEAD
 	private static final String[] IP_ADDRESSES =
 	{ 
 		"129.252.226.221:8888", 
 		/*"192.168.1.76:8080" , 
 		"192.168.1.106:80", 
 		"10.251.4.220"*/};
+=======
+
+	private static final String[] IP_ADDRESSES = {
+	/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" */
+	"129.252.226.221:8888",
+	/*
+	 * "192.168.1.76:8080","192.168.1.106:80","10.251.4.206"
+	 */};
+>>>>>>> origin/master
 
 	// Values for username and password at the time of the login attempt.
 	private String mUsername;
@@ -119,15 +135,15 @@ public class LoginActivity extends Activity
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
 	private Switch mRememberMeSwitch;
+	static DefaultHttpClient client;
+	private String token;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		if (settings.getBoolean("remember_me", false))
-		{
+		if (settings.getBoolean("remember_me", false)) {
 			mUsername = settings.getString("username", "");
 			mPassword = settings.getString("password", "");
 			mRememberMe = settings.getBoolean("remember_me", false);
@@ -149,14 +165,11 @@ public class LoginActivity extends Activity
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordView.setText(mPassword);
 		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener()
-				{
+				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent)
-					{
-						if (id == R.id.login || id == EditorInfo.IME_NULL)
-						{
+							KeyEvent keyEvent) {
+						if (id == R.id.login || id == EditorInfo.IME_NULL) {
 							attemptLogin();
 							return true;
 						}
@@ -167,87 +180,27 @@ public class LoginActivity extends Activity
 		mRememberMeSwitch = (Switch) findViewById(R.id.remember_me_switch);
 		mRememberMeSwitch.setChecked(mRememberMe);
 		mRememberMeSwitch
-				.setOnCheckedChangeListener(new OnCheckedChangeListener()
-				{
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked)
-					{
-						if (isChecked)
-							mRememberMe = true;
-						else
-							mRememberMe = false;
-					}
-				});
+
+		.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (isChecked)
+					mRememberMe = true;
+				else
+					mRememberMe = false;
+			}
+		});
 
 		mLoginFormView = findViewById(R.id.login_form);
 		mLoginStatusView = findViewById(R.id.login_status);
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
 
 		findViewById(R.id.sign_in_button).setOnClickListener(
-				new View.OnClickListener()
-				{
+				new View.OnClickListener() {
 					@Override
-					public void onClick(View view)
-					{
-						/*
-						 * final SharedPreferences settings =
-						 * getSharedPreferences(PREFS_NAME, 0); final
-						 * SharedPreferences.Editor editor = settings.edit();
-						 * 
-						 * if (mRememberMe && settings.getString("pin", "") ==
-						 * "") { AlertDialog.Builder alert = new
-						 * AlertDialog.Builder(context);
-						 * alert.setTitle("Register a Pin");
-						 * alert.setMessage("Enter Pin:");
-						 * 
-						 * final EditText input = new EditText(context);
-						 * alert.setView(input);
-						 * 
-						 * alert.setPositiveButton("Set Pin", new
-						 * DialogInterface.OnClickListener() {
-						 * 
-						 * @Override public void onClick(DialogInterface dialog,
-						 * int whichButton) { mPin = input.getText().toString();
-						 * if (!mPin.contains(" ") && mPin.length() == 4) {
-						 * editor.putString("pin", mPin); editor.commit();
-						 * mPinAuth = true; } return; } });
-						 * 
-						 * alert.setNegativeButton("Cancel", new
-						 * DialogInterface.OnClickListener() {
-						 * 
-						 * @Override public void onClick(DialogInterface dialog,
-						 * int which) { mPinAuth = false; return; } });
-						 * 
-						 * alert.show();
-						 * 
-						 * } else { AlertDialog.Builder alert = new
-						 * AlertDialog.Builder(context);
-						 * alert.setTitle("Pin Login");
-						 * alert.setMessage("Enter Pin:");
-						 * 
-						 * final EditText input = new EditText(context);
-						 * input.setInputType(InputType.TYPE_CLASS_NUMBER);
-						 * alert.setView(input);
-						 * 
-						 * alert.setPositiveButton("Sign In", new
-						 * DialogInterface.OnClickListener() {
-						 * 
-						 * @Override public void onClick(DialogInterface dialog,
-						 * int whichButton) { mPin = input.getText().toString();
-						 * if (mPin.equals(settings.getString("pin", ""))) {
-						 * mPinAuth = true; } return; } });
-						 * 
-						 * alert.setNegativeButton("Cancel", new
-						 * DialogInterface.OnClickListener() {
-						 * 
-						 * @Override public void onClick(DialogInterface dialog,
-						 * int which) { mPinAuth = false; return; } });
-						 * 
-						 * alert.show();
-						 * 
-						 * }
-						 */
+					public void onClick(View view) {
+
 						attemptLogin();
 
 					}
@@ -255,28 +208,24 @@ public class LoginActivity extends Activity
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.activity_login, menu);
 		return true;
 	}
 
 	@Override
-	public void onStop()
-	{
+	public void onStop() {
 		super.onStop();
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 
-		if (mRememberMe)
-		{
+		if (mRememberMe) {
 			editor.putString("username", mUsername);
 			editor.putString("password", mPassword);
 			editor.putBoolean("remember_me", mRememberMe);
-		} else
-		{
+		} else {
 			editor.putString("username", "");
 			editor.putString("password", "");
 			editor.putBoolean("remember_me", false);
@@ -290,15 +239,12 @@ public class LoginActivity extends Activity
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
-	public void attemptLogin()
-	{
-		if (mAuthTask != null)
-		{
+	public void attemptLogin() {
+		if (mAuthTask != null) {
 			return;
 		}
 
-		if (!mPinAuth)
-		{
+		if (!mPinAuth) {
 			return;
 		}
 
@@ -314,38 +260,32 @@ public class LoginActivity extends Activity
 		View focusView = null;
 
 		// Check for a valid password.
-		if (TextUtils.isEmpty(mPassword))
-		{
+		if (TextUtils.isEmpty(mPassword)) {
 			mPasswordView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordView;
 			cancel = true;
-		} else if (mPassword.length() < 4)
-		{
+		} else if (mPassword.length() < 4) {
 			mPasswordView.setError(getString(R.string.error_invalid_password));
 			focusView = mPasswordView;
 			cancel = true;
 		}
 
 		// Check for a valid username address.
-		if (TextUtils.isEmpty(mUsername))
-		{
+		if (TextUtils.isEmpty(mUsername)) {
 			mUsernameView.setError(getString(R.string.error_field_required));
 			focusView = mUsernameView;
 			cancel = true;
-		} else if (mUsername.contains(" "))
-		{
+		} else if (mUsername.contains(" ")) {
 			mUsernameView.setError(getString(R.string.error_invalid_username));
 			focusView = mUsernameView;
 			cancel = true;
 		}
 
-		if (cancel)
-		{
+		if (cancel) {
 			// There was an error; don't attempt login and focus the first
 			// form field with an error.
 			focusView.requestFocus();
-		} else
-		{
+		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
@@ -359,24 +299,20 @@ public class LoginActivity extends Activity
 	 * Shows the progress UI and hides the login form.
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	private void showProgress(final boolean show)
-	{
+	private void showProgress(final boolean show) {
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
 		// the progress spinner.
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
-		{
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
 			int shortAnimTime = getResources().getInteger(
 					android.R.integer.config_shortAnimTime);
 
 			mLoginStatusView.setVisibility(View.VISIBLE);
 			mLoginStatusView.animate().setDuration(shortAnimTime)
 					.alpha(show ? 1 : 0)
-					.setListener(new AnimatorListenerAdapter()
-					{
+					.setListener(new AnimatorListenerAdapter() {
 						@Override
-						public void onAnimationEnd(Animator animation)
-						{
+						public void onAnimationEnd(Animator animation) {
 							mLoginStatusView.setVisibility(show ? View.VISIBLE
 									: View.GONE);
 						}
@@ -385,17 +321,14 @@ public class LoginActivity extends Activity
 			mLoginFormView.setVisibility(View.VISIBLE);
 			mLoginFormView.animate().setDuration(shortAnimTime)
 					.alpha(show ? 0 : 1)
-					.setListener(new AnimatorListenerAdapter()
-					{
+					.setListener(new AnimatorListenerAdapter() {
 						@Override
-						public void onAnimationEnd(Animator animation)
-						{
+						public void onAnimationEnd(Animator animation) {
 							mLoginFormView.setVisibility(show ? View.GONE
 									: View.VISIBLE);
 						}
 					});
-		} else
-		{
+		} else {
 			// The ViewPropertyAnimator APIs are not available, so simply show
 			// and hide the relevant UI components.
 			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -411,159 +344,20 @@ public class LoginActivity extends Activity
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
-	{
+	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
-		protected Boolean doInBackground(Void... params)
-		{
+		protected Boolean doInBackground(Void... params) {
 			// TODO: attempt authentication against a network service.
-
-			// Matcher matcher = IP_ADDRESS.matcher("192.168.1.76");
-			// if (!matcher.matches()) {
-			// // ip is correct
-			// return false;
-			// }
 
 			Log.d("Username", mUsername);
 			Log.d("Password", mPassword);
 
-			// JSONParser jParser = new JSONParser();
-
-//			int response = -1;
-//
-//			URL obj = null;
-//			try
-//			{
-//				obj = new URL("http://192.168.1.106:80/user/authenticate");
-//			} catch (MalformedURLException e3)
-//			{
-//				// TODO Auto-generated catch block
-//				e3.printStackTrace();
-//			}
-//
-//			HttpURLConnection connection = null;
-//
-//			try
-//			{
-//				connection = (HttpURLConnection) obj.openConnection();
-//			} catch (IOException e2)
-//			{
-//				// TODO Auto-generated catch block
-//				e2.printStackTrace();
-//			}
-//			;
-//
-//			try
-//			{
-//				connection.setRequestMethod("POST");
-//				connection.setRequestProperty(
-//						"Authorization",
-//						"Basic "
-//								+ Base64.encodeToString(
-//										(mUsername + ":" + mPassword)
-//												.getBytes(), Base64.NO_WRAP));
-//				connection.setDoOutput(true);
-//			} catch (ProtocolException e2)
-//			{
-//				// TODO Auto-generated catch block
-//				e2.printStackTrace();
-//			}
-//
-//			try
-//			{
-//				response = connection.getResponseCode();
-//				Log.e("Response Code", "" + connection.getResponseCode());
-//			} catch (IOException e1)
-//			{
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
-//
-//			connection.disconnect();
-//
-//			JSONObject object = new JSONObject();
-//			try
-//			{
-//				object.put("PHP_AUTH_USER", mUsername);
-//				object.put("PHP_AUTH_PW", mPassword);
-//			} catch (JSONException e)
-//			{
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-
+			InputStream is = null;
 			// Validate IP Address
+			for (String IP : IP_ADDRESSES) {
+				
+				client = Connection.getClient();
 
-			// HttpClient client = new DefaultHttpClient();
-			//
-			// //HttpClient client = new DefaultHttpClient();
-			// HttpPost post = new
-			// HttpPost("http://129.252.226.221:8888/user/authenticate");
-			// post.setHeader("PHP_AUTH_USER", mUsername);
-			// post.setHeader("PHP_AUTH_PW", mPassword);
-			//
-
-			// int response = -1;
-
-			//
-			// URL obj = null;
-			// try {
-			// obj = new URL("http://192.168.1.76:8080/user/authenticate");
-			// } catch (MalformedURLException e3) {
-			// // TODO Auto-generated catch block
-			// e3.printStackTrace();
-			// }
-			//
-			// HttpURLConnection connection = null;
-			//
-			// try {
-			// connection = (HttpURLConnection) obj.openConnection();
-			// } catch (IOException e2) {
-			// // TODO Auto-generated catch block
-			// e2.printStackTrace();
-			// };
-			//
-			// try {
-			// connection.setRequestMethod("POST");
-			// connection.setRequestProperty("Authorization", "Basic " +
-			// Base64.encodeToString((mUsername + ":" + mPassword).getBytes(),
-			// Base64.NO_WRAP));
-			// connection.setDoOutput(true);
-			// } catch (ProtocolException e2) {
-			// // TODO Auto-generated catch block
-			// e2.printStackTrace();
-			// }
-			//
-			//
-			// try {
-			// response = connection.getResponseCode();
-			// Log.e("Response Code", "" + connection.getResponseCode());
-			// } catch (IOException e1) {
-			// // TODO Auto-generated catch block
-			// e1.printStackTrace();
-			// }
-			//
-			// connection.disconnect();
-			//
-			//
-			//
-			// JSONObject object = new JSONObject();
-			// try {
-			// object.put("PHP_AUTH_USER", mUsername);
-			// object.put("PHP_AUTH_PW", mPassword);
-			// } catch (JSONException e) {
-			// // TODO Auto-generated catch block
-			// e.printStackTrace();
-			// }
-
-			// Validate IP Address
-			for (String IP : IP_ADDRESSES)
-			{
-
-				final HttpParams httpParams = new BasicHttpParams();
-				HttpConnectionParams.setConnectionTimeout(httpParams, 1000);
-
-				HttpClient client = new DefaultHttpClient(httpParams);
 				HttpPost post = new HttpPost("http://" + IP
 						+ "/user/authenticate");
 
@@ -576,79 +370,98 @@ public class LoginActivity extends Activity
 										(mUsername + ":" + mPassword)
 												.getBytes(), Base64.NO_WRAP));
 
-				try
-				{
+				// get the json object
+				try {
 					Thread.sleep(200);
 					response = client.execute(post);
+					HttpEntity entity = null;
+					String JSONResult = null;
 					Log.e("Response", ""
 							+ response.getStatusLine().getStatusCode());
-				} catch (ConnectTimeoutException e)
-				{
+					entity = response.getEntity();
+					is = entity.getContent();
+
+					try {
+						BufferedReader reader = new BufferedReader(
+								new InputStreamReader(is, "iso-8859-1"), 8);
+						StringBuilder sb = new StringBuilder();
+						String line = null;
+						while ((line = reader.readLine()) != null) {
+							sb.append(line + "\n");
+						}
+						is.close();
+						JSONResult = sb.toString();
+						Log.d("JSON Result", JSONResult);
+					} catch (Exception e) {
+						Log.e("Buffer Error",
+								"Error converting result " + e.toString());
+					}
+
+					JSONObject jObject = new JSONObject(JSONResult);
+
+					Log.e("JSON Response", " " + jObject);
+
+					token = jObject.getString("token");
+
+					Log.e("Token", " " + token);
+
+					if (response != null
+							&& response.getStatusLine().getStatusCode() == 200)
+
+						return true;
+				} catch (JSONException e) {
+					Log.e("JSON Parser", "Error parsing data");
+				} catch (ConnectTimeoutException e) {
 					Log.e("Connect Timeout Exception", e.getMessage()
 							+ " on IP:" + IP);
-				} catch (ClientProtocolException e)
-				{
+				} catch (ClientProtocolException e) {
 					Log.e("Client Protocol Exception", e.getMessage()
 							+ " on IP:" + IP);
 					// return false;
-				} catch (IOException e)
-				{
+				} catch (IOException e) {
 					Log.e("I/O Exception", e.getMessage() + " on IP:" + IP);
 					// return false;
-				} catch (InterruptedException e)
-				{
+				} catch (InterruptedException e) {
 					Log.e("Interrupted Exception", e.getMessage() + " on IP:"
 							+ IP);
 					// TODO Auto-generated catch block
 					// return false;
 				}
 
-				if (response != null
-						&& response.getStatusLine().getStatusCode() == 200)
-					return true;
-
 			}
-			// switch (response.getStatusLine().getStatusCode()) {
-			// case 200:
-			// case
-
-			// }
 
 			return false;
 		}
 
 		@Override
-		protected void onPostExecute(final Boolean success)
-		{
+		protected void onPostExecute(final Boolean success) {
 			mAuthTask = null;
 			showProgress(false);
 
-			if (success)
-			{
+			if (success) {
 				// if (mRememberMe && mPin )
 				Intent i;
-				if (mHasPin/* && registeredDevice */)
-				{
+				if (mHasPin/* && registeredDevice */) {
 					i = new Intent(LoginActivity.this,
 							RegisteredUserLoginActivity.class);
 					i.putExtra("username", mUsername);
 					i.putExtra("password", mPassword);
-				} else if (mHasPin)
-				{
+					i.putExtra("token", token);
+				} else if (mHasPin) {
 					i = new Intent(LoginActivity.this,
 							RegisterUserLoginActivity.class);
 					i.putExtra("username", mUsername);
 					i.putExtra("password", mPassword);
-				} else
-				{
+					i.putExtra("token", token);
+				} else {
 					i = new Intent(LoginActivity.this, DashboardActivity.class);
 					i.putExtra("username", mUsername);
 					i.putExtra("password", mPassword);
+					i.putExtra("token", token);
 				}
 				startActivity(i);
 				finish();
-			} else
-			{
+			} else {
 				mPasswordView
 						.setError(getString(R.string.error_incorrect_password));
 				mPasswordView.requestFocus();
@@ -656,8 +469,7 @@ public class LoginActivity extends Activity
 		}
 
 		@Override
-		protected void onCancelled()
-		{
+		protected void onCancelled() {
 			mAuthTask = null;
 			showProgress(false);
 		}
