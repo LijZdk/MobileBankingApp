@@ -10,12 +10,17 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,10 +54,11 @@ public class DashboardActivity extends Activity
 	 */
 	private static final String[] IP_ADDRESSES =
 	{ 
+		/*"ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/"*/
 		"129.252.226.221:8888", 
-		"192.168.1.76:8080" , 
+		/*"192.168.1.76:8080" , 
 		"192.168.1.106:80", 
-		"10.251.4.220"
+		"10.251.4.220"*/
 	 };
 
 	// Is the device registered
@@ -60,7 +66,7 @@ public class DashboardActivity extends Activity
 
 	// Account name array
 	private List accountsList;
-
+	//static DefaultHttpClient client;
 	private TextView mStatusMessageView;
 	private View mStatusView;
 	private View mDashboardView;
@@ -181,28 +187,33 @@ public class DashboardActivity extends Activity
 			{
 				try
 				{
-					final HttpParams httpParams = new BasicHttpParams();
-					HttpConnectionParams.setConnectionTimeout(httpParams, 3000);
+					
+					LoginActivity.client = Connection.getClient();
 
-					HttpClient client = new DefaultHttpClient(httpParams);
+					Intent i = getIntent();
+					
+
+					//HttpClient client = new DefaultHttpClient(httpParams);
 					HttpGet get = new HttpGet("http://" + IP + "/user/accounts");
 					get.setHeader("Accept", "application/json");
 					get.setHeader("Content-type", "application/json");
-
+					get.setHeader("Auth-Token", i.getStringExtra("token"));
 					HttpResponse response = null;
 					HttpEntity entity = null;
+					
+					Log.e("executing request"," " + get.getURI());
 
 					String JSONResult = null;
 
 					try
 					{
 						Thread.sleep(200);
-						response = client.execute(get);
+						response = LoginActivity.client.execute(get/*, localContext*/);
 						Log.e("Response", ""
 								+ response.getStatusLine().getStatusCode());
 						entity = response.getEntity();
 						is = entity.getContent();
-
+						
 						try
 						{
 							BufferedReader reader = new BufferedReader(
