@@ -92,9 +92,9 @@ public class LoginActivity extends Activity
 	private static final String[] IP_ADDRESSES =
 	{ 
 		"129.252.226.221:8888", 
-		"192.168.1.76:8080" , 
+		/*"192.168.1.76:8080" , 
 		"192.168.1.106:80", 
-		"10.251.4.220"};
+		"10.251.4.220"*/};
 
 	// Values for username and password at the time of the login attempt.
 	private String mUsername;
