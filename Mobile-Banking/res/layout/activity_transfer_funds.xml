@@ -3,6 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
+
+    <TextView
+        android:id="@+id/To"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To:" />
+
+    <EditText
+        android:id="@+id/toTextBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/From"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="From:" />
+
+    <EditText
+        android:id="@+id/fromTextBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10" />
+
+    <TextView
+        android:id="@+id/Amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Amount" />
+
+    <EditText
+        android:id="@+id/amountTextBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10" />
+
+    <Button
+        android:id="@+id/transferButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Transfer" />
 
 </LinearLayout>

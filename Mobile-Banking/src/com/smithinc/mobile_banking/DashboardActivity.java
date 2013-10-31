@@ -239,23 +239,23 @@ public class DashboardActivity extends Activity
 
 						accountsList = new ArrayList();
 
-						String accTypSav = ((JSONArray) jObject
+						String accTypChk = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(0)
 								.getString("name");
-						int accNumSav = ((JSONArray) jObject
+						int accNumChk = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(0)
 								.getInt("number");
-						double accBalSav = ((JSONArray) jObject
+						double accBalChk = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(0)
 								.getDouble("balance");
 						
-						String accTypChk = ((JSONArray) jObject
+						String accTypSav = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(1)
 								.getString("name");
-						int accNumChk = ((JSONArray) jObject
+						int accNumSav = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(1)
 								.getInt("number");
-						double accBalChk = ((JSONArray) jObject
+						double accBalSav = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(1)
 								.getDouble("balance");
 						
@@ -269,13 +269,13 @@ public class DashboardActivity extends Activity
 								.get("unencrypted payload")).getJSONObject(2)
 								.getDouble("balance");
 
-						accountsList.add(accTypSav);
-						accountsList.add(accNumSav);
-						accountsList.add(accBalSav);
-						
 						accountsList.add(accTypChk);
 						accountsList.add(accNumChk);
 						accountsList.add(accBalChk);
+						
+						accountsList.add(accTypSav);
+						accountsList.add(accNumSav);
+						accountsList.add(accBalSav);
 						
 						accountsList.add(accTypRet);
 						accountsList.add(accNumRet);
