@@ -95,14 +95,8 @@ public class LoginActivity extends Activity {
 	 * + "[0-9]{2}|[1-9][0-9]|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}" +
 	 * "|[1-9][0-9]|[0-9]))");
 	 */
-<<<<<<< HEAD
-	private static final String[] IP_ADDRESSES =
-	{ 
-		"129.252.226.221:8888", 
-		/*"192.168.1.76:8080" , 
-		"192.168.1.106:80", 
-		"10.251.4.220"*/};
-=======
+
+
 
 	private static final String[] IP_ADDRESSES = {
 	/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" */
@@ -110,7 +104,7 @@ public class LoginActivity extends Activity {
 	/*
 	 * "192.168.1.76:8080","192.168.1.106:80","10.251.4.206"
 	 */};
->>>>>>> origin/master
+
 
 	// Values for username and password at the time of the login attempt.
 	private String mUsername;
