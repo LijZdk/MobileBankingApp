@@ -26,7 +26,7 @@ public class Connection extends Application{
 	    }
 	    private static DefaultHttpClient createClient(){
 	            BasicHttpParams params = new BasicHttpParams();
-	            HttpConnectionParams.setConnectionTimeout(params, 1000);
+	            HttpConnectionParams.setConnectionTimeout(params, 10000);
 	            SchemeRegistry schemeRegistry = new SchemeRegistry();
 	            schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
 	            final SSLSocketFactory sslSocketFactory = SSLSocketFactory.getSocketFactory();
