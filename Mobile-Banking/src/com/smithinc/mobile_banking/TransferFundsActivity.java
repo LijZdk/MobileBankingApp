@@ -4,7 +4,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.SignatureException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Formatter;
+import java.util.HashMap;
+
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -37,6 +51,8 @@ public class TransferFundsActivity extends Activity
 	String mToAccount;
 	String mFromAccount;
 	String mAmountToTransfer;
+	String mTransferDate;
+	double mAmountToTransferD;
 
 	private TransferTask mTransferTask;
 
@@ -48,6 +64,16 @@ public class TransferFundsActivity extends Activity
 	 * "192.168.1.76:8080" , "192.168.1.106:80", "10.251.4.220"
 	 */
 	};
+
+	private static String HMAC_KEY = "065a62448fb75fce3764bcbe68f9908d";
+	
+	private static String AES_KEY = "b36013521d0f5dbea0e4ac1fd7af804a";
+
+	private static String HASH_ALGORITHM = "HmacSHA256";
+	
+	private static String IV;
+	
+	private static String HASHED_MAC;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -82,6 +108,19 @@ public class TransferFundsActivity extends Activity
 		mToAccount = mTransferTo.getText().toString();
 		mFromAccount = mTransferFrom.getText().toString();
 		mAmountToTransfer = mAmount.getText().toString();
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		mTransferDate = sdf.format(new Date());
+		try
+		{
+			mAmountToTransferD = Double.parseDouble(mAmountToTransfer); 
+		} catch (NumberFormatException e)
+		{
+			// p did not contain a valid double
+		}
+		
+		mTransferTask = new TransferTask();
+		mTransferTask.execute((Void) null);
 	}
 
 	public class TransferTask extends AsyncTask<Void, Void, Boolean>
@@ -102,87 +141,65 @@ public class TransferFundsActivity extends Activity
 
 					// HttpClient client = new DefaultHttpClient(httpParams);
 					HttpPost post = new HttpPost("http://" + IP
-							+ "/user/authenticate");
+							+ "/user/transferfunds");
 					post.setHeader("Accept", "application/json");
 					post.setHeader("Content-type", "application/json");
 					post.setHeader("Auth-Token", i.getStringExtra("token"));
-					//HttpResponse response = null;
+					
+					// HttpResponse response = null;
 					HttpEntity entity = null;
 
 					Log.e("executing request", " " + post.getURI());
 
 					String JSONResult = null;
+					HttpResponse response = null;
 
+					Thread.sleep(200);
+
+					JSONObject transferObj = new JSONObject();
 					try
 					{
-						Thread.sleep(200);
-
-						JSONObject jObject = new JSONObject(JSONResult);
-
-						JSONArray jArray = jObject.toJSONArray(null);
-
-						// accountsList = new ArrayList();
-
-						String accTypChk = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(0)
-								.getString("name");
-						int accNumChk = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(0)
-								.getInt("number");
-						double accBalChk = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(0)
-								.getDouble("balance");
-
-						String accTypSav = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(1)
-								.getString("name");
-						int accNumSav = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(1)
-								.getInt("number");
-						double accBalSav = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(1)
-								.getDouble("balance");
-
-						String accTypRet = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(2)
-								.getString("name");
-						int accNumRet = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(2)
-								.getInt("number");
-						double accBalRet = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(2)
-								.getDouble("balance");
-
-						// accountsList.add(accTypChk);
-						// accountsList.add(accNumChk);
-						// accountsList.add(accBalChk);
-						//
-						// accountsList.add(accTypSav);
-						// accountsList.add(accNumSav);
-						// accountsList.add(accBalSav);
-						//
-						// accountsList.add(accTypRet);
-						// accountsList.add(accNumRet);
-						// accountsList.add(accBalRet);
-
-						Log.e("Accounts type", " Type: " + accTypSav
-								+ " Balance: " + accBalSav);
-						Log.e("Accounts type", " Type: " + accTypChk
-								+ " Balance: " + accBalChk);
-						Log.e("Accounts type", " Type: " + accTypRet
-								+ " Balance: " + accBalRet);
-//						if (response != null
-//								&& response.getStatusLine().getStatusCode() == 200)
-//							return true;
+						transferObj.put("toAccount", mToAccount);
+						transferObj.put("fromAccount", mFromAccount);
+						transferObj.put("amount", mAmountToTransferD);
+						transferObj.put("transferDate", mTransferDate);
+						transferObj.put("transferNotes", "transfer");
 
 					} catch (JSONException e)
 					{
-						Log.e("JSON Parser", "Error parsing data");
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-
-					// String result = EntityUtils.toString(entity);
-
-					// Log.d("Results", result);
+					
+					HashMap<String, Object> data = new HashMap<String, Object>();
+					
+					String hash = mToAccount + mFromAccount + mAmountToTransferD + mTransferDate + "transfer";
+					try
+					{
+						hash = hashMac(hash, HMAC_KEY);
+					} catch (SignatureException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					data.put("mac", hash);
+					data.put("payload", transferObj);
+					
+					try
+					{
+						response = LoginActivity.client.execute(post);
+					} catch (ClientProtocolException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					Log.d("Response", response.toString());
 
 				} catch (InterruptedException e)
 				{
@@ -224,5 +241,67 @@ public class TransferFundsActivity extends Activity
 			// showProgress(false);
 		}
 
+	}
+
+	/**
+	 * Encryption of a given text using the provided secretKey
+	 * 
+	 * @param text
+	 * @param secretKey
+	 * @return the encoded string
+	 * @throws SignatureException
+	 */
+	public static String hashMac(String text, String secretKey)
+			throws SignatureException
+	{
+
+		try
+		{
+			Key sk = new SecretKeySpec(secretKey.getBytes(), HASH_ALGORITHM);
+			Mac mac = Mac.getInstance(sk.getAlgorithm());
+			mac.init(sk);
+			final byte[] hmac = mac.doFinal(text.getBytes());
+			return toHexString(hmac);
+		} catch (NoSuchAlgorithmException e1)
+		{
+			// throw an exception or pick a different encryption method
+			throw new SignatureException(
+					"error building signature, no such algorithm in device "
+							+ HASH_ALGORITHM);
+		} catch (InvalidKeyException e)
+		{
+			throw new SignatureException(
+					"error building signature, invalid key " + HASH_ALGORITHM);
+		}
+	}
+
+	public static String toHexString(byte[] bytes)
+	{
+		StringBuilder sb = new StringBuilder(bytes.length * 2);
+
+		Formatter formatter = new Formatter(sb);
+		for (byte b : bytes)
+		{
+			formatter.format("%02x", b);
+		}
+
+		return sb.toString();
+	}
+	
+	public static String encrypt(String data) {
+	
+		String encrypted_data = "";
+		
+		//Cipher cipher = Cipher.getInstance("AES/CBC/)
+		
+		return encrypted_data;
+	}
+	
+	public static void setIV() {
+		SecureRandom random = new SecureRandom();
+		byte[] iv = new byte[16];
+		random.nextBytes(iv);
+		IV = new String(iv);
+		
 	}
 }
