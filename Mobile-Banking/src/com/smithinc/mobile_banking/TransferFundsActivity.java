@@ -59,7 +59,7 @@ public class TransferFundsActivity extends Activity
 	private static final String[] IP_ADDRESSES =
 	{
 	/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" */
-	"129.252.226.44:8888",
+	"129.252.226.193:8888",
 	/*
 	 * "192.168.1.76:8080" , "192.168.1.106:80", "10.251.4.220"
 	 */
@@ -141,10 +141,12 @@ public class TransferFundsActivity extends Activity
 
 					// HttpClient client = new DefaultHttpClient(httpParams);
 					HttpPost post = new HttpPost("http://" + IP
-							+ "/user/transferfunds");
+							+ "/account/transferfunds");
 					post.setHeader("Accept", "application/json");
 					post.setHeader("Content-type", "application/json");
 					post.setHeader("Auth-Token", i.getStringExtra("token"));
+					
+					Log.e("Auth-Token ", "token: "+ i.getStringExtra("token"));
 					
 					// HttpResponse response = null;
 					HttpEntity entity = null;
@@ -189,6 +191,7 @@ public class TransferFundsActivity extends Activity
 					try
 					{
 						response = LoginActivity.client.execute(post);
+						Log.e("Response code: ", "code" + response.getStatusLine().getStatusCode());
 					} catch (ClientProtocolException e)
 					{
 						// TODO Auto-generated catch block

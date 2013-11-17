@@ -53,20 +53,20 @@ public class DashboardActivity extends Activity
 	 * Where we store valid IP addresses
 	 */
 	private static final String[] IP_ADDRESSES =
-	{ 
-		/*"ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/"*/
-		"129.252.226.44:8888", 
-		/*"192.168.1.76:8080" , 
-		"192.168.1.106:80", 
-		"10.251.4.220"*/
-	 };
+	{
+	/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" */
+	"129.252.226.193:8888",
+	/*
+	 * "192.168.1.76:8080" , "192.168.1.106:80", "10.251.4.220"
+	 */
+	};
 
 	// Is the device registered
 	private boolean isRegistered;
 
 	// Account name array
 	private List accountsList;
-	//static DefaultHttpClient client;
+	// static DefaultHttpClient client;
 	private TextView mStatusMessageView;
 	private View mStatusView;
 	private View mDashboardView;
@@ -105,6 +105,11 @@ public class DashboardActivity extends Activity
 				case 1:
 					i = new Intent(DashboardActivity.this,
 							TransferFundsActivity.class);
+					Intent j = getIntent();
+					
+					i.putExtra("username", j.getStringExtra("username"));
+					i.putExtra("password", j.getStringExtra("password"));
+					i.putExtra("token", j.getStringExtra("token"));
 					startActivity(i);
 					break;
 				case 2:
@@ -187,33 +192,35 @@ public class DashboardActivity extends Activity
 			{
 				try
 				{
-					
+
 					LoginActivity.client = Connection.getClient();
 
 					Intent i = getIntent();
-					
 
-					//HttpClient client = new DefaultHttpClient(httpParams);
+					// HttpClient client = new DefaultHttpClient(httpParams);
 					HttpGet get = new HttpGet("http://" + IP + "/user/accounts");
 					get.setHeader("Accept", "application/json");
 					get.setHeader("Content-type", "application/json");
 					get.setHeader("Auth-Token", i.getStringExtra("token"));
 					HttpResponse response = null;
 					HttpEntity entity = null;
-					
-					Log.e("executing request"," " + get.getURI());
+
+					Log.e("executing request", " " + get.getURI());
 
 					String JSONResult = null;
 
 					try
 					{
 						Thread.sleep(200);
-						response = LoginActivity.client.execute(get/*, localContext*/);
+						response = LoginActivity.client.execute(get/*
+																	 * ,
+																	 * localContext
+																	 */);
 						Log.e("Response", ""
 								+ response.getStatusLine().getStatusCode());
 						entity = response.getEntity();
 						is = entity.getContent();
-						
+
 						try
 						{
 							BufferedReader reader = new BufferedReader(
@@ -226,7 +233,7 @@ public class DashboardActivity extends Activity
 							}
 							is.close();
 							JSONResult = sb.toString();
-							Log.d("JSON Result", JSONResult);
+							Log.e("JSON Result", JSONResult);
 						} catch (Exception e)
 						{
 							Log.e("Buffer Error", "Error converting result "
@@ -248,7 +255,7 @@ public class DashboardActivity extends Activity
 						double accBalChk = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(0)
 								.getDouble("balance");
-						
+
 						String accTypSav = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(1)
 								.getString("name");
@@ -258,7 +265,7 @@ public class DashboardActivity extends Activity
 						double accBalSav = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(1)
 								.getDouble("balance");
-						
+
 						String accTypRet = ((JSONArray) jObject
 								.get("unencrypted payload")).getJSONObject(2)
 								.getString("name");
@@ -272,15 +279,14 @@ public class DashboardActivity extends Activity
 						accountsList.add(accTypChk);
 						accountsList.add(accNumChk);
 						accountsList.add(accBalChk);
-						
+
 						accountsList.add(accTypSav);
 						accountsList.add(accNumSav);
 						accountsList.add(accBalSav);
-						
+
 						accountsList.add(accTypRet);
 						accountsList.add(accNumRet);
 						accountsList.add(accBalRet);
-						
 
 						Log.e("Accounts type", " Type: " + accTypSav
 								+ " Balance: " + accBalSav);
@@ -333,7 +339,9 @@ public class DashboardActivity extends Activity
 			{
 				i = new Intent(DashboardActivity.this,
 						AccountViewActivity.class);
-				i.putStringArrayListExtra("accountsList", (ArrayList<String>) accountsList);
+				i.putStringArrayListExtra("accountsList",
+						(ArrayList<String>) accountsList);
+
 				startActivity(i);
 			} else
 			{
