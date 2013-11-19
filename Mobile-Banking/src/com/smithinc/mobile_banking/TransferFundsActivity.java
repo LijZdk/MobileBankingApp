@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -15,6 +16,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
@@ -25,6 +29,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,27 +58,28 @@ public class TransferFundsActivity extends Activity
 	String mFromAccount;
 	String mAmountToTransfer;
 	String mTransferDate;
-	double mAmountToTransferD;
+	int mAmountToTransferFirst;
+	float mAmountToTransferSecond;
 
 	private TransferTask mTransferTask;
 
 	private static final String[] IP_ADDRESSES =
 	{
 	/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" */
-	"129.252.226.193:8888",
+	"129.252.226.44:8888",
 	/*
 	 * "192.168.1.76:8080" , "192.168.1.106:80", "10.251.4.220"
 	 */
 	};
 
-	private static String HMAC_KEY = "065a62448fb75fce3764bcbe68f9908d";
-	
+	private static String HMAC_KEY = "065a62448fb75fce3764dcbe68f9908d";
+
 	private static String AES_KEY = "b36013521d0f5dbea0e4ac1fd7af804a";
 
 	private static String HASH_ALGORITHM = "HmacSHA256";
-	
+
 	private static String IV;
-	
+
 	private static String HASHED_MAC;
 
 	@Override
@@ -84,7 +91,9 @@ public class TransferFundsActivity extends Activity
 		setContentView(R.layout.activity_transfer_funds);
 
 		mTransferTo = (EditText) findViewById(R.id.toTextBox);
+		mTransferTo.setText("Checking");
 		mTransferFrom = (EditText) findViewById(R.id.fromTextBox);
+		mTransferFrom.setText("Savings");
 		mAmount = (EditText) findViewById(R.id.amountTextBox);
 
 		mTransferButton = (Button) findViewById(R.id.transferButton);
@@ -106,19 +115,23 @@ public class TransferFundsActivity extends Activity
 	public void transfer()
 	{
 		mToAccount = mTransferTo.getText().toString();
+		// mToAccount = mTransferTo.getText().toString();
 		mFromAccount = mTransferFrom.getText().toString();
+		// mFromAccount = mTransferFrom.setText("Savings");
 		mAmountToTransfer = mAmount.getText().toString();
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
 		mTransferDate = sdf.format(new Date());
 		try
 		{
-			mAmountToTransferD = Double.parseDouble(mAmountToTransfer); 
+			mAmountToTransferFirst = (int) (Double
+					.parseDouble(mAmountToTransfer) * 100);
+			// mAmountToTransferF = Float.parseFloat(mAmountToTransfer);
 		} catch (NumberFormatException e)
 		{
 			// p did not contain a valid double
 		}
-		
+
 		mTransferTask = new TransferTask();
 		mTransferTask.execute((Void) null);
 	}
@@ -145,9 +158,9 @@ public class TransferFundsActivity extends Activity
 					post.setHeader("Accept", "application/json");
 					post.setHeader("Content-type", "application/json");
 					post.setHeader("Auth-Token", i.getStringExtra("token"));
-					
-					Log.e("Auth-Token ", "token: "+ i.getStringExtra("token"));
-					
+
+					Log.e("Auth-Token ", "token: " + i.getStringExtra("token"));
+
 					// HttpResponse response = null;
 					HttpEntity entity = null;
 
@@ -159,23 +172,17 @@ public class TransferFundsActivity extends Activity
 					Thread.sleep(200);
 
 					JSONObject transferObj = new JSONObject();
-					try
-					{
-						transferObj.put("toAccount", mToAccount);
-						transferObj.put("fromAccount", mFromAccount);
-						transferObj.put("amount", mAmountToTransferD);
-						transferObj.put("transferDate", mTransferDate);
-						transferObj.put("transferNotes", "transfer");
+					JSONArray transJsonArray = new JSONArray();
 
-					} catch (JSONException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
 					HashMap<String, Object> data = new HashMap<String, Object>();
-					
-					String hash = mToAccount + mFromAccount + mAmountToTransferD + mTransferDate + "transfer";
+					// Put D back to get double.
+					String hash = mToAccount + mFromAccount
+							+ mAmountToTransferFirst + mTransferDate;/*
+																	 * +
+																	 * "transfer"
+																	 * ;
+																	 */
+					Log.e("Hash", "string: " + hash);
 					try
 					{
 						hash = hashMac(hash, HMAC_KEY);
@@ -184,14 +191,101 @@ public class TransferFundsActivity extends Activity
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					data.put("mac", hash);
-					data.put("payload", transferObj);
-					
+					// data.put("payload", transferObj);
+
+					try
+					{
+						JSONObject reqObj = new JSONObject();
+						reqObj.put("mac", hash);
+						transJsonArray.put(reqObj);
+						reqObj = new JSONObject();
+						reqObj.put("toAccount", mToAccount);
+						transJsonArray.put(reqObj);
+						reqObj = new JSONObject();
+						reqObj.put("fromAccount", mFromAccount);
+						transJsonArray.put(reqObj);
+						reqObj = new JSONObject();
+						// Put D back to get double.
+						reqObj.put("amount", mAmountToTransferFirst);
+						transJsonArray.put(reqObj);
+						reqObj = new JSONObject();
+						reqObj.put("transferDate", mTransferDate);
+						transJsonArray.put(reqObj);
+						reqObj = new JSONObject();
+						reqObj.put("transferNotes", "transfer");
+						transJsonArray.put(reqObj);
+
+						transferObj.put("payload", transJsonArray);
+						// transferObj.put("mac", hash);
+						// transferObj.put("payload", transferObj);
+						// transferObj.put("toAccount", mToAccount);
+						// transferObj.put("fromAccount", mFromAccount);
+						// transferObj.put("amount", mAmountToTransferD);
+						// transferObj.put("transferDate", mTransferDate);
+						// transferObj.put("transferNotes", "transfer");
+						Log.e("JSONArray: ",
+								"Object: " + transferObj.toString());
+
+					} catch (JSONException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					// JSONObject holder = null;
+					// try
+					// {
+					// holder = getJsonObjectFromMap(data);
+					// } catch (JSONException e1)
+					// {
+					// // TODO Auto-generated catch block
+					// e1.printStackTrace();
+					// }
+
+					StringEntity transferStEntity = null;
+					try
+					{
+						transferStEntity = new StringEntity(
+								transferObj.toString());
+					} catch (UnsupportedEncodingException e1)
+					{
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					post.setEntity(transferStEntity);
+
 					try
 					{
 						response = LoginActivity.client.execute(post);
-						Log.e("Response code: ", "code" + response.getStatusLine().getStatusCode());
+						Log.e("Response code: ", "code"
+								+ response.getStatusLine().getStatusCode()
+								+ " More of response: " + response.toString());
+
+						entity = response.getEntity();
+						is = entity.getContent();
+
+						try
+						{
+							BufferedReader reader = new BufferedReader(
+									new InputStreamReader(is, "iso-8859-1"), 8);
+							StringBuilder sb = new StringBuilder();
+							String line = null;
+							while ((line = reader.readLine()) != null)
+							{
+								sb.append(line + "\n");
+							}
+							is.close();
+							JSONResult = sb.toString();
+							Log.e("JSON Result", JSONResult);
+						} catch (Exception e)
+						{
+							Log.e("Buffer Error", "Error converting result "
+									+ e.toString());
+						}
+
 					} catch (ClientProtocolException e)
 					{
 						// TODO Auto-generated catch block
@@ -201,7 +295,7 @@ public class TransferFundsActivity extends Activity
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					Log.d("Response", response.toString());
 
 				} catch (InterruptedException e)
@@ -290,21 +384,68 @@ public class TransferFundsActivity extends Activity
 
 		return sb.toString();
 	}
-	
-	public static String encrypt(String data) {
-	
+
+	public static String encrypt(String data)
+	{
+
 		String encrypted_data = "";
-		
-		//Cipher cipher = Cipher.getInstance("AES/CBC/)
-		
+
+		// Cipher cipher = Cipher.getInstance("AES/CBC/)
+
 		return encrypted_data;
 	}
-	
-	public static void setIV() {
+
+	public static void setIV()
+	{
 		SecureRandom random = new SecureRandom();
 		byte[] iv = new byte[16];
 		random.nextBytes(iv);
 		IV = new String(iv);
-		
+
+	}
+
+	private static JSONObject getJsonObjectFromMap(Map params)
+			throws JSONException
+	{
+
+		// all the passed parameters from the post request
+		// iterator used to loop through all the parameters
+		// passed in the post request
+		Iterator iter = params.entrySet().iterator();
+
+		// Stores JSON
+		JSONObject holder = new JSONObject();
+
+		// using the earlier example your first entry would get email
+		// and the inner while would get the value which would be 'foo@bar.com'
+		// { fan: { email : 'foo@bar.com' } }
+
+		// While there is another entry
+		while (iter.hasNext())
+		{
+			// gets an entry in the params
+			Map.Entry pairs = (Map.Entry) iter.next();
+
+			// creates a key for Map
+			String key = (String) pairs.getKey();
+
+			// Create a new map
+			Map m = (Map) pairs.getValue();
+
+			// object for storing Json
+			JSONObject data = new JSONObject();
+
+			// gets the value
+			Iterator iter2 = m.entrySet().iterator();
+			while (iter2.hasNext())
+			{
+				Map.Entry pairs2 = (Map.Entry) iter2.next();
+				data.put((String) pairs2.getKey(), (String) pairs2.getValue());
+			}
+
+			// puts email and 'foo@bar.com' together in map
+			holder.put(key, data);
+		}
+		return holder;
 	}
 }
