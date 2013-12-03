@@ -64,13 +64,15 @@ import android.net.http.*;
  * Activity which displays a login screen to the user, offering registration as
  * well.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity
+{
 	/**
 	 * A dummy authentication store containing known user names and passwords.
 	 * TODO: remove after connecting to a real authentication system.
 	 */
 
-	private static final String[] DUMMY_CREDENTIALS = new String[] { "user:basic:6666" };
+	private static final String[] DUMMY_CREDENTIALS = new String[]
+	{ "user:basic:6666" };
 
 	/**
 	 * The default username to populate the username field with.
@@ -96,15 +98,15 @@ public class LoginActivity extends Activity {
 	 * "|[1-9][0-9]|[0-9]))");
 	 */
 
-
-
-	private static final String[] IP_ADDRESSES = {
-	/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" */
-	"129.252.226.44:8888",
+	private static final String[] IP_ADDRESSES =
+	{
 	/*
-	 * "192.168.1.76:8080","192.168.1.106:80","10.251.4.206"
+	 * "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/"
+	 * "129.252.226.44:8888"
+	 */"ec2-54-201-49-238.us-west-2.compute.amazonaws.com"
+	/*
+	 * "192.168.1.76:8080" , "192.168.1.106:80", "10.251.4.220"
 	 */};
-
 
 	// Values for username and password at the time of the login attempt.
 	private String mUsername;
@@ -133,11 +135,13 @@ public class LoginActivity extends Activity {
 	private String token;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		if (settings.getBoolean("remember_me", false)) {
+		if (settings.getBoolean("remember_me", false))
+		{
 			mUsername = settings.getString("username", "");
 			mPassword = settings.getString("password", "");
 			mRememberMe = settings.getBoolean("remember_me", false);
@@ -159,11 +163,14 @@ public class LoginActivity extends Activity {
 		mPasswordView = (EditText) findViewById(R.id.password);
 		mPasswordView.setText(mPassword);
 		mPasswordView
-				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+				.setOnEditorActionListener(new TextView.OnEditorActionListener()
+				{
 					@Override
 					public boolean onEditorAction(TextView textView, int id,
-							KeyEvent keyEvent) {
-						if (id == R.id.login || id == EditorInfo.IME_NULL) {
+							KeyEvent keyEvent)
+					{
+						if (id == R.id.login || id == EditorInfo.IME_NULL)
+						{
 							attemptLogin();
 							return true;
 						}
@@ -175,10 +182,12 @@ public class LoginActivity extends Activity {
 		mRememberMeSwitch.setChecked(mRememberMe);
 		mRememberMeSwitch
 
-		.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		.setOnCheckedChangeListener(new OnCheckedChangeListener()
+		{
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
+					boolean isChecked)
+			{
 				if (isChecked)
 					mRememberMe = true;
 				else
@@ -191,9 +200,11 @@ public class LoginActivity extends Activity {
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);
 
 		findViewById(R.id.sign_in_button).setOnClickListener(
-				new View.OnClickListener() {
+				new View.OnClickListener()
+				{
 					@Override
-					public void onClick(View view) {
+					public void onClick(View view)
+					{
 
 						attemptLogin();
 
@@ -202,24 +213,28 @@ public class LoginActivity extends Activity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		super.onCreateOptionsMenu(menu);
 		getMenuInflater().inflate(R.menu.activity_login, menu);
 		return true;
 	}
 
 	@Override
-	public void onStop() {
+	public void onStop()
+	{
 		super.onStop();
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 
-		if (mRememberMe) {
+		if (mRememberMe)
+		{
 			editor.putString("username", mUsername);
 			editor.putString("password", mPassword);
 			editor.putBoolean("remember_me", mRememberMe);
-		} else {
+		} else
+		{
 			editor.putString("username", "");
 			editor.putString("password", "");
 			editor.putBoolean("remember_me", false);
@@ -233,12 +248,15 @@ public class LoginActivity extends Activity {
 	 * If there are form errors (invalid email, missing fields, etc.), the
 	 * errors are presented and no actual login attempt is made.
 	 */
-	public void attemptLogin() {
-		if (mAuthTask != null) {
+	public void attemptLogin()
+	{
+		if (mAuthTask != null)
+		{
 			return;
 		}
 
-		if (!mPinAuth) {
+		if (!mPinAuth)
+		{
 			return;
 		}
 
@@ -254,32 +272,38 @@ public class LoginActivity extends Activity {
 		View focusView = null;
 
 		// Check for a valid password.
-		if (TextUtils.isEmpty(mPassword)) {
+		if (TextUtils.isEmpty(mPassword))
+		{
 			mPasswordView.setError(getString(R.string.error_field_required));
 			focusView = mPasswordView;
 			cancel = true;
-		} else if (mPassword.length() < 4) {
+		} else if (mPassword.length() < 4)
+		{
 			mPasswordView.setError(getString(R.string.error_invalid_password));
 			focusView = mPasswordView;
 			cancel = true;
 		}
 
 		// Check for a valid username address.
-		if (TextUtils.isEmpty(mUsername)) {
+		if (TextUtils.isEmpty(mUsername))
+		{
 			mUsernameView.setError(getString(R.string.error_field_required));
 			focusView = mUsernameView;
 			cancel = true;
-		} else if (mUsername.contains(" ")) {
+		} else if (mUsername.contains(" "))
+		{
 			mUsernameView.setError(getString(R.string.error_invalid_username));
 			focusView = mUsernameView;
 			cancel = true;
 		}
 
-		if (cancel) {
+		if (cancel)
+		{
 			// There was an error; don't attempt login and focus the first
 			// form field with an error.
 			focusView.requestFocus();
-		} else {
+		} else
+		{
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
 			mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
@@ -293,20 +317,24 @@ public class LoginActivity extends Activity {
 	 * Shows the progress UI and hides the login form.
 	 */
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	private void showProgress(final boolean show) {
+	private void showProgress(final boolean show)
+	{
 		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
 		// for very easy animations. If available, use these APIs to fade-in
 		// the progress spinner.
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
+		{
 			int shortAnimTime = getResources().getInteger(
 					android.R.integer.config_shortAnimTime);
 
 			mLoginStatusView.setVisibility(View.VISIBLE);
 			mLoginStatusView.animate().setDuration(shortAnimTime)
 					.alpha(show ? 1 : 0)
-					.setListener(new AnimatorListenerAdapter() {
+					.setListener(new AnimatorListenerAdapter()
+					{
 						@Override
-						public void onAnimationEnd(Animator animation) {
+						public void onAnimationEnd(Animator animation)
+						{
 							mLoginStatusView.setVisibility(show ? View.VISIBLE
 									: View.GONE);
 						}
@@ -315,14 +343,17 @@ public class LoginActivity extends Activity {
 			mLoginFormView.setVisibility(View.VISIBLE);
 			mLoginFormView.animate().setDuration(shortAnimTime)
 					.alpha(show ? 0 : 1)
-					.setListener(new AnimatorListenerAdapter() {
+					.setListener(new AnimatorListenerAdapter()
+					{
 						@Override
-						public void onAnimationEnd(Animator animation) {
+						public void onAnimationEnd(Animator animation)
+						{
 							mLoginFormView.setVisibility(show ? View.GONE
 									: View.VISIBLE);
 						}
 					});
-		} else {
+		} else
+		{
 			// The ViewPropertyAnimator APIs are not available, so simply show
 			// and hide the relevant UI components.
 			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -338,9 +369,11 @@ public class LoginActivity extends Activity {
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+	public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
+	{
 		@Override
-		protected Boolean doInBackground(Void... params) {
+		protected Boolean doInBackground(Void... params)
+		{
 			// TODO: attempt authentication against a network service.
 
 			Log.d("Username", mUsername);
@@ -348,8 +381,9 @@ public class LoginActivity extends Activity {
 
 			InputStream is = null;
 			// Validate IP Address
-			for (String IP : IP_ADDRESSES) {
-				
+			for (String IP : IP_ADDRESSES)
+			{
+
 				client = Connection.getClient();
 
 				HttpPost post = new HttpPost("http://" + IP
@@ -365,7 +399,8 @@ public class LoginActivity extends Activity {
 												.getBytes(), Base64.NO_WRAP));
 
 				// get the json object
-				try {
+				try
+				{
 					Thread.sleep(200);
 					response = client.execute(post);
 					HttpEntity entity = null;
@@ -375,18 +410,21 @@ public class LoginActivity extends Activity {
 					entity = response.getEntity();
 					is = entity.getContent();
 
-					try {
+					try
+					{
 						BufferedReader reader = new BufferedReader(
 								new InputStreamReader(is, "iso-8859-1"), 8);
 						StringBuilder sb = new StringBuilder();
 						String line = null;
-						while ((line = reader.readLine()) != null) {
+						while ((line = reader.readLine()) != null)
+						{
 							sb.append(line + "\n");
 						}
 						is.close();
 						JSONResult = sb.toString();
 						Log.d("JSON Result", JSONResult);
-					} catch (Exception e) {
+					} catch (Exception e)
+					{
 						Log.e("Buffer Error",
 								"Error converting result " + e.toString());
 					}
@@ -403,19 +441,24 @@ public class LoginActivity extends Activity {
 							&& response.getStatusLine().getStatusCode() == 200)
 
 						return true;
-				} catch (JSONException e) {
+				} catch (JSONException e)
+				{
 					Log.e("JSON Parser", "Error parsing data");
-				} catch (ConnectTimeoutException e) {
+				} catch (ConnectTimeoutException e)
+				{
 					Log.e("Connect Timeout Exception", e.getMessage()
 							+ " on IP:" + IP);
-				} catch (ClientProtocolException e) {
+				} catch (ClientProtocolException e)
+				{
 					Log.e("Client Protocol Exception", e.getMessage()
 							+ " on IP:" + IP);
 					// return false;
-				} catch (IOException e) {
+				} catch (IOException e)
+				{
 					Log.e("I/O Exception", e.getMessage() + " on IP:" + IP);
 					// return false;
-				} catch (InterruptedException e) {
+				} catch (InterruptedException e)
+				{
 					Log.e("Interrupted Exception", e.getMessage() + " on IP:"
 							+ IP);
 					// TODO Auto-generated catch block
@@ -428,26 +471,31 @@ public class LoginActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(final Boolean success) {
+		protected void onPostExecute(final Boolean success)
+		{
 			mAuthTask = null;
 			showProgress(false);
 
-			if (success) {
+			if (success)
+			{
 				// if (mRememberMe && mPin )
 				Intent i;
-				if (mHasPin/* && registeredDevice */) {
+				if (mHasPin/* && registeredDevice */)
+				{
 					i = new Intent(LoginActivity.this,
 							RegisteredUserLoginActivity.class);
 					i.putExtra("username", mUsername);
 					i.putExtra("password", mPassword);
 					i.putExtra("token", token);
-				} else if (mHasPin) {
+				} else if (mHasPin)
+				{
 					i = new Intent(LoginActivity.this,
 							RegisterUserLoginActivity.class);
 					i.putExtra("username", mUsername);
 					i.putExtra("password", mPassword);
 					i.putExtra("token", token);
-				} else {
+				} else
+				{
 					i = new Intent(LoginActivity.this, DashboardActivity.class);
 					i.putExtra("username", mUsername);
 					i.putExtra("password", mPassword);
@@ -455,7 +503,8 @@ public class LoginActivity extends Activity {
 				}
 				startActivity(i);
 				finish();
-			} else {
+			} else
+			{
 				mPasswordView
 						.setError(getString(R.string.error_incorrect_password));
 				mPasswordView.requestFocus();
@@ -463,7 +512,8 @@ public class LoginActivity extends Activity {
 		}
 
 		@Override
-		protected void onCancelled() {
+		protected void onCancelled()
+		{
 			mAuthTask = null;
 			showProgress(false);
 		}

@@ -54,11 +54,11 @@ public class DashboardActivity extends Activity
 	 */
 	private static final String[] IP_ADDRESSES =
 	{
-	/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" */
-	"129.252.226.44:8888",
-	/*
-	 * "192.168.1.76:8080" , "192.168.1.106:80", "10.251.4.220"
-	 */
+		/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" 
+		"129.252.226.44:8888"*/"ec2-54-201-49-238.us-west-2.compute.amazonaws.com"
+		/*
+		 * "192.168.1.76:8080" , "192.168.1.106:80", "10.251.4.220"
+		 */
 	};
 
 	// Is the device registered
@@ -197,7 +197,6 @@ public class DashboardActivity extends Activity
 
 					Intent i = getIntent();
 
-					// HttpClient client = new DefaultHttpClient(httpParams);
 					HttpGet get = new HttpGet("http://" + IP + "/user/accounts");
 					get.setHeader("Accept", "application/json");
 					get.setHeader("Content-type", "application/json");
@@ -212,10 +211,8 @@ public class DashboardActivity extends Activity
 					try
 					{
 						Thread.sleep(200);
-						response = LoginActivity.client.execute(get/*
-																	 * ,
-																	 * localContext
-																	 */);
+						response = LoginActivity.client.execute(get);
+						
 						Log.e("Response", ""
 								+ response.getStatusLine().getStatusCode());
 						entity = response.getEntity();
@@ -242,58 +239,30 @@ public class DashboardActivity extends Activity
 
 						JSONObject jObject = new JSONObject(JSONResult);
 
-						JSONArray jArray = jObject.toJSONArray(null);
+						//JSONArray jArray = (JSONArray) jObject;
 
 						accountsList = new ArrayList();
 
-						String accTypChk = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(0)
-								.getString("name");
-						int accNumChk = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(0)
-								.getInt("number");
-						double accBalChk = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(0)
-								.getDouble("balance");
+						for (int j = 0; j < jObject.length(); j++)
+						{
+							String name = ((JSONArray) jObject
+									.get("unencrypted payload")).getJSONObject(j)
+									.getString("name");
+							int number = ((JSONArray) jObject
+									.get("unencrypted payload")).getJSONObject(j)
+									.getInt("number");
+							double balance = ((JSONArray) jObject
+									.get("unencrypted payload")).getJSONObject(j)
+									.getDouble("balance");
+							
+							accountsList.add(name);
+							accountsList.add(number);
+							accountsList.add(balance);
+							
+							Log.e("Accounts type", " Type: " + name
+									+ " Balance: " + balance);
+						}
 
-						String accTypSav = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(1)
-								.getString("name");
-						int accNumSav = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(1)
-								.getInt("number");
-						double accBalSav = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(1)
-								.getDouble("balance");
-
-						String accTypRet = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(2)
-								.getString("name");
-						int accNumRet = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(2)
-								.getInt("number");
-						double accBalRet = ((JSONArray) jObject
-								.get("unencrypted payload")).getJSONObject(2)
-								.getDouble("balance");
-
-						accountsList.add(accTypChk);
-						accountsList.add(accNumChk);
-						accountsList.add(accBalChk);
-
-						accountsList.add(accTypSav);
-						accountsList.add(accNumSav);
-						accountsList.add(accBalSav);
-
-						accountsList.add(accTypRet);
-						accountsList.add(accNumRet);
-						accountsList.add(accBalRet);
-
-						Log.e("Accounts type", " Type: " + accTypSav
-								+ " Balance: " + accBalSav);
-						Log.e("Accounts type", " Type: " + accTypChk
-								+ " Balance: " + accBalChk);
-						Log.e("Accounts type", " Type: " + accTypRet
-								+ " Balance: " + accBalRet);
 						if (response != null
 								&& response.getStatusLine().getStatusCode() == 200)
 							return true;

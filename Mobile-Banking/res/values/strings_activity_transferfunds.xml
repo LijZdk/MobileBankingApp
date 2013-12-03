@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="accounts_prompt">Choose an account</string>
+    
+    <string-array name="accounts_arrays">
+        <item>Checkings</item>
+        <item>Savings</item>
+        <item>Retirement</item>
+    </string-array>
+    
+</resources>

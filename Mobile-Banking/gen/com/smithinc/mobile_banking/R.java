@@ -9,6 +9,7 @@ package com.smithinc.mobile_banking;
 
 public final class R {
     public static final class array {
+        public static final int accounts_arrays=0x7f050001;
         public static final int choices=0x7f050000;
     }
     public static final class attr {
@@ -28,7 +29,6 @@ public final class R {
         public static final int amountTextBox=0x7f080013;
         public static final int dashboard=0x7f080002;
         public static final int dashboard_container=0x7f080003;
-        public static final int fromTextBox=0x7f080011;
         public static final int login=0x7f080009;
         public static final int login_form=0x7f080006;
         public static final int login_status=0x7f080004;
@@ -39,9 +39,10 @@ public final class R {
         public static final int pin_form=0x7f08000d;
         public static final int remember_me_switch=0x7f08000b;
         public static final int sign_in_button=0x7f08000a;
+        public static final int spinner1=0x7f08000f;
+        public static final int spinner2=0x7f080011;
         public static final int status=0x7f080000;
         public static final int status_message=0x7f080001;
-        public static final int toTextBox=0x7f08000f;
         public static final int transferButton=0x7f080014;
         public static final int username=0x7f080007;
     }
@@ -57,6 +58,7 @@ public final class R {
         public static final int activity_login=0x7f070000;
     }
     public static final class string {
+        public static final int accounts_prompt=0x7f04000e;
         public static final int action_sign_in_register=0x7f040004;
         public static final int action_sign_in_short=0x7f040005;
         public static final int app_name=0x7f040000;

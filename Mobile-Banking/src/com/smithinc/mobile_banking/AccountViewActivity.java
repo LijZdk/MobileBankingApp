@@ -59,28 +59,17 @@ public class AccountViewActivity extends Activity
 
 		accListFView = new ArrayList<String>();
 
-
-		
-		// String typesList = "Type:        Number:       Balance:";
-		String chk = accList.get(0).toString() + "\n" + "Number: "
-				+ accList.get(1).toString() + "\nBalance: "
-				+ accList.get(2).toString();
-		
-
-		String sav = accList.get(3).toString() + "\n" + "Number: "
-				+ accList.get(4).toString() + "\nBalance: "
-				+ accList.get(5).toString();
-
-		
-		String ret = accList.get(6).toString() + "\n" + "Number: "
-				+ accList.get(7).toString() + "\nBalance: "
-				+ accList.get(8).toString();
-
+		for (int i = 0; i < accList.size(); i=i+3)
+		{
+			// String typesList = "Type:        Number:       Balance:";
+			String data = accList.get(i).toString() + "\n" + "Number: "
+					+ accList.get(i+1).toString() + "\nBalance: "
+					+ accList.get(i+2).toString();
+			
+			accListFView.add(data);
+		}
 
 		// accListFView.add(typesList);
-		accListFView.add(chk);
-		accListFView.add(sav);
-		accListFView.add(ret);
 
 		accAdt = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, accListFView);

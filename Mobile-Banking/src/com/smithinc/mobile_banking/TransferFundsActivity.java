@@ -45,12 +45,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 public class TransferFundsActivity extends Activity
 {
+	Spinner spinner1, spinner2;
 
-	EditText mTransferTo;
-	EditText mTransferFrom;
 	EditText mAmount;
 	Button mTransferButton;
 
@@ -65,8 +65,10 @@ public class TransferFundsActivity extends Activity
 
 	private static final String[] IP_ADDRESSES =
 	{
-	/* "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/" */
-	"129.252.226.44:8888",
+	/*
+	 * "ec2-54-200-161-9.us-west-2.compute.amazonaws.com/webservices/"
+	 * "129.252.226.44:8888"
+	 */"ec2-54-201-49-238.us-west-2.compute.amazonaws.com"
 	/*
 	 * "192.168.1.76:8080" , "192.168.1.106:80", "10.251.4.220"
 	 */
@@ -89,11 +91,9 @@ public class TransferFundsActivity extends Activity
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_transfer_funds);
-
-		mTransferTo = (EditText) findViewById(R.id.toTextBox);
-		mTransferTo.setText("Checking");
-		mTransferFrom = (EditText) findViewById(R.id.fromTextBox);
-		mTransferFrom.setText("Savings");
+		
+		addListenerOnSpinnerItemSelection();
+		
 		mAmount = (EditText) findViewById(R.id.amountTextBox);
 
 		mTransferButton = (Button) findViewById(R.id.transferButton);
@@ -104,21 +104,30 @@ public class TransferFundsActivity extends Activity
 					@Override
 					public void onClick(View view)
 					{
-
 						transfer();
-
 					}
 				});
 
 	}
 
+	public void addListenerOnSpinnerItemSelection()
+	{
+		spinner1 = (Spinner) findViewById(R.id.spinner1);
+		
+		spinner2 = (Spinner) findViewById(R.id.spinner2);
+		
+	}
+
 	public void transfer()
 	{
-		mToAccount = mTransferTo.getText().toString();
+		mToAccount = String.valueOf(spinner1.getSelectedItem());
 		// mToAccount = mTransferTo.getText().toString();
-		mFromAccount = mTransferFrom.getText().toString();
+		mFromAccount = String.valueOf(spinner2.getSelectedItem());
 		// mFromAccount = mTransferFrom.setText("Savings");
 		mAmountToTransfer = mAmount.getText().toString();
+
+		Log.e("Spinner Check", "Check: To " + mToAccount + " From "
+				+ mFromAccount);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
 		mTransferDate = sdf.format(new Date());
@@ -171,17 +180,11 @@ public class TransferFundsActivity extends Activity
 
 					Thread.sleep(200);
 
-					JSONObject transferObj = new JSONObject();
-					JSONArray transJsonArray = new JSONArray();
-
 					HashMap<String, Object> data = new HashMap<String, Object>();
 					// Put D back to get double.
 					String hash = mToAccount + mFromAccount
-							+ mAmountToTransferFirst + mTransferDate;/*
-																	 * +
-																	 * "transfer"
-																	 * ;
-																	 */
+							+ mAmountToTransferFirst + mTransferDate;
+
 					Log.e("Hash", "string: " + hash);
 					try
 					{
@@ -194,6 +197,9 @@ public class TransferFundsActivity extends Activity
 
 					data.put("mac", hash);
 					// data.put("payload", transferObj);
+
+					JSONObject transferObj = new JSONObject();
+					JSONArray transJsonArray = new JSONArray();
 
 					try
 					{
@@ -218,13 +224,7 @@ public class TransferFundsActivity extends Activity
 						transJsonArray.put(reqObj);
 
 						transferObj.put("payload", transJsonArray);
-						// transferObj.put("mac", hash);
-						// transferObj.put("payload", transferObj);
-						// transferObj.put("toAccount", mToAccount);
-						// transferObj.put("fromAccount", mFromAccount);
-						// transferObj.put("amount", mAmountToTransferD);
-						// transferObj.put("transferDate", mTransferDate);
-						// transferObj.put("transferNotes", "transfer");
+
 						Log.e("JSONArray: ",
 								"Object: " + transferObj.toString());
 
@@ -234,17 +234,8 @@ public class TransferFundsActivity extends Activity
 						e.printStackTrace();
 					}
 
-					// JSONObject holder = null;
-					// try
-					// {
-					// holder = getJsonObjectFromMap(data);
-					// } catch (JSONException e1)
-					// {
-					// // TODO Auto-generated catch block
-					// e1.printStackTrace();
-					// }
-
 					StringEntity transferStEntity = null;
+
 					try
 					{
 						transferStEntity = new StringEntity(

@@ -10,14 +10,12 @@
         android:layout_height="wrap_content"
         android:text="To:" />
 
-    <EditText
-        android:id="@+id/toTextBox"
+    <Spinner
+        android:id="@+id/spinner1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
+        android:entries="@array/accounts_arrays"
+        android:prompt="@string/accounts_prompt" />
 
     <TextView
         android:id="@+id/From"
@@ -25,11 +23,12 @@
         android:layout_height="wrap_content"
         android:text="From:" />
 
-    <EditText
-        android:id="@+id/fromTextBox"
+    <Spinner
+        android:id="@+id/spinner2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10" />
+        android:entries="@array/accounts_arrays"
+        android:prompt="@string/accounts_prompt" />
 
     <TextView
         android:id="@+id/Amount"
